@@ -19,7 +19,6 @@ import { UPDATE_COLLECTION } from "../../../store/types";
 import Icon from 'react-icons-kit';
 import {ic_close} from 'react-icons-kit/md/ic_close'
 import {ic_cloud_queue_outline} from 'react-icons-kit/md/ic_cloud_queue_outline'
-import { stringToHash } from '../../../utils/common'
 
 
 const Collection = () => {
@@ -35,7 +34,9 @@ const Collection = () => {
 
   const [title, setTitle] = useState("");
   const [symbol, setSymbol] = useState("");
-  const [initBaseURI, setInitBaseURI] = useState("");
+  const [initBaseURI, setInitBaseURI] = useState(
+    API_URL + "/collection/undefined/token/"
+  );
   const [maxSupply, setMaxSupply] = useState("");
   const [mintPrice, setMintPrice] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -186,7 +187,7 @@ const Collection = () => {
     setFile(null);
     setImageUrl("");
     setTitle("");
-    setInitBaseURI("");
+    setTitle("");
     setSymbol("");
     setMaxSupply("");
     setMintPrice("");
@@ -199,20 +200,6 @@ const Collection = () => {
   const addButtonClicked = () => {
     setVisibleAddModal(true)
     document.body.style.setProperty('--overflow', 'hidden');
-  }
-
-  const nameChanged = (e) => {
-    setTitle(e.target.value); 
-    const hashString = stringToHash(e.target.value + symbol + Date.now());
-    const baseURI = API_URL + "/collection/" + hashString + "/";
-    setInitBaseURI(baseURI);
-  }
-
-  const symbolChanged = (e) => {
-    setSymbol(e.target.value); 
-    const hashString = stringToHash(title + e.target.value + Date.now());
-    const baseURI = API_URL + "/collection/" + hashString + "/";
-    setInitBaseURI(baseURI);
   }
 
   return (
@@ -304,7 +291,7 @@ const Collection = () => {
                   label="Name"
                   name="Name"
                   type="text"
-                  onChange={(e) => nameChanged(e) }
+                  onChange={(e) => setTitle(e.target.value)}
                   value={title}
                   required
                 />
@@ -313,7 +300,7 @@ const Collection = () => {
                   label="Symbol"
                   name="Symbol"
                   type="text"
-                  onChange={(e) => symbolChanged(e) }
+                  onChange={(e) => setSymbol(e.target.value)}
                   value={symbol}
                   required
                 />
@@ -325,7 +312,6 @@ const Collection = () => {
                   onChange={(e) => setInitBaseURI(e.target.value)}
                   value={initBaseURI}
                   required
-                  disabled
                 />
                 <TextInput
                   className={styles.field}

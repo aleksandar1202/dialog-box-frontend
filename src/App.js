@@ -30,17 +30,21 @@ import Web3 from "web3";
 import artTokenContractABI from "./config/abis/artToken.json";
 import artTokenManagerContractABI from "./config/abis/artTokenManager.json";
 import { getChainId } from "./utils/common";
+require('dotenv').config();
 
 function App() {
   const auth = useSelector((state) => state.authReducer);
   const dispatch = useDispatch();
 
   useEffect(() => {
-  
+
+    console.log("node_env", process.env.REACT_APP_NODE_ENV);
+
     checkIfLoggedIn(dispatch);
 
     window.ethereum.on("accountsChanged", function (accounts) {
       if (accounts.length > 0) {
+        console.log("account changed");
         const address = accounts[0];
         checkAccountType(address, dispatch);
       } else {
@@ -63,6 +67,7 @@ function App() {
 
     //set event listener to collection deployment.
     tokenManagerContract.events.CollectionAdded().on("data", async (event) => {
+      console.log(`collection deployed: ${event.returnValues._addr}`);
 
       const artTokenContract = new web3.eth.Contract(
         artTokenContractABI.abi,
@@ -80,6 +85,8 @@ function App() {
         address: address,
         owner: owner
       };
+
+      console.log("new collection", new_collection);
 
       Actions.addNewCollection(new_collection, dispatch);
     });
